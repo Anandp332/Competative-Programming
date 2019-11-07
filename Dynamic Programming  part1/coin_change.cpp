@@ -1,9 +1,14 @@
 #include <iostream>
 using namespace std;
+//using dynamic programming
 int coin_change_fast(int n, int *d, int numD, int **output)
 {
     // base case
     //if we have only one coin
+    if (n < 0)
+    {
+        return 0;
+    }
     if (n == 0)
     {
         return 1;
@@ -15,10 +20,10 @@ int coin_change_fast(int n, int *d, int numD, int **output)
         return 0;
     }
     // checking if solution already availble
-    if (output[n][numD] > -1)
+    if (output[numD][n] > -1)
     {
 
-        return output[n][numD];
+        return output[numD][n];
     }
     // base case
     // if n become 1rs and d have 2 or 5 value of coin then next step will be -ve
@@ -32,9 +37,30 @@ int coin_change_fast(int n, int *d, int numD, int **output)
     int second = coin_change_fast(n, d + 1, numD - 1, output);
     //sum of including d[0] and not including d[0] will be total count
     //updating output array
-    output[n][numD] = first + second;
+    output[numD][n] = first + second;
     return first + second;
 }
+int countWaysToMakeChange(int d[], int numD, int n)
+{
+
+    /*  Don't write main().
+   *  Don't read input, it is passed as function argument.
+   *  Return output and don't print it.
+   *  Taking input and printing output is handled automatically.
+   */
+    int **p = new int *[numD];
+    for (int i = 0; i < numD + 1; i++)
+    {
+        p[i] = new int[n + 1];
+        for (int j = 0; j < n + 1; j++)
+        {
+            p[i][j] = -1;
+        }
+    }
+    return coin_change_fast(n, d, numD, p);
+}
+
+//using without dp
 int coin_change(int n, int *d, int numD)
 {
     // base case
@@ -71,18 +97,5 @@ int main()
     int n = 4;    //lets take 4 rupees change
     int numD = 2; // and total coin have 2
                   // this funtion is gone very slow because in this fn there are 2 recursion and every time work gone repeated
-    cout << "slow solution: " << coin_change(n, d, numD) << endl;
-    ; // ans should be 3 because we can replace 4 by 1 1 1 1 , 1 1 2 and  2 2.
-    // other way
-    //allocate  2d array of of size n+1*numD +1 size
-    int **p = new int *[numD + 1];
-    for (int i = 0; i < numD + 1; i++)
-    {
-        p[i] = new int[n + 2];
-        for (int j = 0; j < n + 1; j++)
-        {
-            p[i][j] = -1;
-        }
-    }
-    cout << "very fast solution: " << coin_change_fast(n, d, numD, p) << endl;
+    cout << coin_change(n, d, numD) << endl;
 }
